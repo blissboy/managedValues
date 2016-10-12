@@ -1,0 +1,5 @@
+.idea/
+*.iml
+attic
+target/
+var/
