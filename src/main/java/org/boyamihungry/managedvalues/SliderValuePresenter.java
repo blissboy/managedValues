@@ -4,11 +4,12 @@ import controlP5.ControlBehavior;
 import controlP5.ControlP5;
 import controlP5.Controller;
 import controlP5.Slider;
+import processing.core.PVector;
 
 /**
  * Created by patwheaton on 10/9/16.
  */
-public class SliderValuePresenter implements CP5Presenter<Slider> {
+public class SliderValuePresenter implements CP5Presenter<Slider>, ValueController<Float>, ValuePresenter, ValueControllerUI {
 
     static String ID = "SLIDER_PRESENTER";
 
@@ -34,15 +35,21 @@ public class SliderValuePresenter implements CP5Presenter<Slider> {
         slider.setBehavior(new ControlBehavior() {
             @Override
             public void update() {
-                mValue.setValue(slider.getValue());
-                //localSliderValueCopy = slider.getValue();
+                //mValue.setValue(slider.getValue());
+                localSliderValueCopy = slider.getValue();
             }
         });
     }
 
     @Override
-    public void presentValue() {
+    public Float getValue() {
+        return localSliderValueCopy;
+    }
+
+    @Override
+    public PVector present(PVector origin, PVector minimumSize, PVector maximumSize) {
         System.out.println(mValue);
+        return new PVector(0,0);
     }
 
     @Override
@@ -50,6 +57,25 @@ public class SliderValuePresenter implements CP5Presenter<Slider> {
         return slider;
     }
 
+    /**
+     * Presents a value at the
+     *
+     * @param origin
+     * @param minimumSize
+     * @param maximumSize
+     * @return
+     */
+    @Override
+    public PVector presentValue(PVector origin, PVector minimumSize, PVector maximumSize) {
+        slider.setPosition(origin.x, origin.y);
+        slider.setValue(mValue.getValue());
+        slider.setWidth((int)maximumSize.x);
+        slider.setHeight((int)maximumSize.y);
+        return maximumSize;
+    }
 
+    //    @Override
+//    public Controller<Slider> getControl() {
+//        return slider;
+//    }
 }
-            ;

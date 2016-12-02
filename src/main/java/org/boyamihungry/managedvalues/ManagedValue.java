@@ -1,12 +1,11 @@
 package org.boyamihungry.managedvalues;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by patwheaton on 10/9/16.
  */
-public interface ManagedValue<T> {
+public interface ManagedValue<T extends Number> {
 
     /**
      * Gets the key for this value.
@@ -20,13 +19,6 @@ public interface ManagedValue<T> {
      */
     T getValue();
 
-    /**
-     * Sets the value. Will be removed.
-     *
-     * @param value
-     * @deprecated
-     */
-    void setValue(T value);
 
     /**
      * Gets the range for this value.
@@ -35,7 +27,7 @@ public interface ManagedValue<T> {
     Range<T> getRange();
 
 
-    public interface Range<R> {
+    public interface Range<R extends Number> {
         R getMax();
 
         R getMin();
@@ -43,7 +35,7 @@ public interface ManagedValue<T> {
         R getDefault();
     }
 
-    List<T> getHistory();
+    //List<T> getHistory();
 
     /**
      * Adds a value controller (after validation) for this value. This controller can then be used
@@ -66,13 +58,13 @@ public interface ManagedValue<T> {
      * retrieves the current value controller.
      * @return
      */
-    ValueController getCurrentValueController();
+    ValueController<T> getCurrentValueController();
 
     /**
      * Get the value controllers that can be used to control (set) this value.
      * @return
      */
-    Collection<ValueController> getAvailableValueControllers();
+    Collection<ValueController<T>> getAvailableValueControllers();
 
 
 

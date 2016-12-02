@@ -10,10 +10,43 @@ import java.util.Set;
 /**
  * Created by patwheaton on 10/9/16.
  */
-public abstract class BaseManagedValue<T> implements ManagedValue<T> {
+public  class BaseManagedValue<T extends Number> implements ManagedValue<T> {
+
+    private final String key;
+    private final Range<T> range;
+
+    public BaseManagedValue(@NonNull  String key, @NonNull Range<T> range) {
+        this.key = key;
+        this.range = range;
+    }
+
+    /**
+     * Gets the key for this value.
+     *
+     * @return
+     */
+    @Override
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * Gets the range for this value.
+     *
+     * @return
+     */
+    @Override
+    public Range<T> getRange() {
+        return range;
+    }
 
     private Set<ValueController<T>> possibleControllers = new HashSet<>();
-    ValueController<T> currentController = (ValueController<T>)ValueController.NOOP_CONTROLLER;
+    ValueController<T> currentController = new ValueController<T>() {
+        @Override
+        public T getValue() {
+            return getRange().getDefault();
+        }
+    };
 
     /**
      * Adds a value controller (after validation) for this value. This controller can then be used
@@ -23,8 +56,16 @@ public abstract class BaseManagedValue<T> implements ManagedValue<T> {
      * @return false if this controller cannot be used.
      */
     @Override
-    public boolean addValueController(ValueController<T> potentialController) {
-        possibleControllers.add(potentialController);
+    public boolean addValueController(@NonNull ValueController<T> potentialController) {
+        if ( validateController(potentialController)) {
+            possibleControllers.add(potentialController);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    boolean validateController(ValueController<T> controller) {
         return true;
     }
 
@@ -54,7 +95,7 @@ public abstract class BaseManagedValue<T> implements ManagedValue<T> {
      * @return
      */
     @Override
-    public ValueController getCurrentValueController() {
+    public ValueController<T> getCurrentValueController() {
         return currentController;
     }
 
@@ -64,7 +105,62 @@ public abstract class BaseManagedValue<T> implements ManagedValue<T> {
      * @return
      */
     @Override
-    public Collection<ValueController> getAvailableValueControllers() {
+    public Collection<ValueController<T>> getAvailableValueControllers() {
         return Collections.unmodifiableSet(possibleControllers);
     }
+
+    @Override
+    public T getValue() {
+        return currentController.getValue();
+    }
+
+
+    public static class Range <T extends Number> implements ManagedValue.Range<T> {
+
+        final T max;
+        final T min;
+        final T defaultValue;
+
+        public Range(@NonNull T min, @NonNull T max, @NonNull T defaultValue) {
+
+            Number minn = min;
+            Number maxx = max;
+            Number defaultt = defaultValue;
+
+            if (minn.doubleValue() < maxx.doubleValue() && defaultt.doubleValue() <= maxx.doubleValue() && defaultt.doubleValue() >= minn.doubleValue()) {
+                this.max = max;
+                this.min = min;
+                this.defaultValue = defaultValue;
+            } else {
+                throw new IllegalArgumentException("rule violated: min < defaultValue < max");
+            }
+        }
+
+        @Override
+        public T getMax() {
+            return max;
+        }
+
+        @Override
+        public T getMin() {
+            return min;
+        }
+
+        @Override
+        public T getDefault() {
+            return defaultValue;
+        }
+
+        @Override
+        public String toString() {
+            return "FloatRange{" +
+                    "max=" + max +
+                    ", min=" + min +
+                    ", defaultValue=" + defaultValue +
+                    '}';
+        }
+    }
+
+
+
 }

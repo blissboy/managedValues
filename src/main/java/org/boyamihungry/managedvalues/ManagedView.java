@@ -1,6 +1,8 @@
 package org.boyamihungry.managedvalues;
 
-import java.util.List;
+import processing.core.PVector;
+
+import java.util.Collection;
 
 /**
  * Created by patwheaton on 10/9/16.
@@ -9,8 +11,10 @@ public interface ManagedView  {
 
     /**
      * Renders the view.
+     * @param origin
+     * @param size
      */
-    void show();
+    void show(PVector origin, PVector size);
 
     /**
      * Adds a value to be displayed in the view with the first presenter for the class of the value.
@@ -28,18 +32,27 @@ public interface ManagedView  {
      * Retrieves a list of all the managed values in the view.
      * @return
      */
-    List<ManagedValue> getManagedValues();
+    Collection<ManagedValue> getManagedValues();
 
     /**
-     * Sets the class to use as the presenter for this
+     * Sets the class to use as the presenter for a value
      * @param value
      * @param presenter
      */
-    void setPresenterForValue(ManagedValue value, ValuePresenter presenter);
-    List<ValuePresenter> getAvailablePresenters(Class clazz);
-    List<ValuePresenter> getAvailablePresenters(ManagedValue value);  //convenience method
+    <T extends Number> void setPresenterForValue(ManagedValue<T> value, ValuePresenter presenter, boolean makeItTheOnlyPresenter);
 
-    ValuePresenter getPresenterForValue(ManagedValue value);
+    /**
+     * Convienience method to sets the class to use as the presenter for a value, from the key for the value.
+     * @param valueKey
+     * @param presenter
+     */
+    void setPresenterForValue(String valueKey, ValuePresenter presenter, boolean makeItTheOnlyPresenter);
 
 
+    Collection<Class> getAvailablePresenters(Class clazz);
+    Collection<Class> getAvailablePresenters(ManagedValue value);  //convenience method
+
+    Collection<ValuePresenter> getPresenterForValue(ManagedValue value);
+
+    String getName();
 }
