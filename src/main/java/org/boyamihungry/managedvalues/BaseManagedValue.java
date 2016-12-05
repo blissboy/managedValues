@@ -1,6 +1,8 @@
 package org.boyamihungry.managedvalues;
 
 import lombok.NonNull;
+import processing.core.PApplet;
+import processing.core.PVector;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,11 +16,20 @@ public  class BaseManagedValue<T extends Number> implements ManagedValue<T> {
 
     private final String key;
     private final Range<T> range;
+    private final ManagedValueControlPanel controlPanel;
 
-    public BaseManagedValue(@NonNull  String key, @NonNull Range<T> range) {
+    public BaseManagedValue( @NonNull String key, @NonNull Range<T> range, PApplet app) {
         this.key = key;
         this.range = range;
+        this.controlPanel = new BaseManagedValueControlPanel<T>(app, this);
     }
+
+    public BaseManagedValue(@NonNull  String key, @NonNull Range<T> range, ManagedValueControlPanel controlPanel) {
+        this.key = key;
+        this.range = range;
+        this.controlPanel = controlPanel;
+    }
+
 
     /**
      * Gets the key for this value.
@@ -114,6 +125,10 @@ public  class BaseManagedValue<T extends Number> implements ManagedValue<T> {
         return currentController.getValue();
     }
 
+    @Override
+    public PVector drawControlPanel() {
+        return this.controlPanel.draw(new PVector(0,0), new PVector(0,0), new PVector(0,0));
+    }
 
     public static class Range <T extends Number> implements ManagedValue.Range<T> {
 

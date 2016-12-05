@@ -4,12 +4,11 @@ import controlP5.ControlBehavior;
 import controlP5.ControlP5;
 import controlP5.Controller;
 import controlP5.Slider;
-import processing.core.PVector;
 
 /**
  * Created by patwheaton on 10/9/16.
  */
-public class SliderValuePresenter implements CP5Presenter<Slider>, ValueController<Float>, ValuePresenter, ValueControllerUI {
+public class SliderValueController implements CP5Controller<Slider> {
 
     static String ID = "SLIDER_PRESENTER";
 
@@ -17,7 +16,7 @@ public class SliderValuePresenter implements CP5Presenter<Slider>, ValueControll
     ManagedValue<Float> mValue;
     private float localSliderValueCopy;
 
-    SliderValuePresenter(ControlP5 cp5, ManagedValue<Float> managedValue) {
+    SliderValueController(ControlP5 cp5, ManagedValue<Float> managedValue) {
 
         this.mValue = managedValue;
         this.localSliderValueCopy = managedValue.getValue();
@@ -46,11 +45,11 @@ public class SliderValuePresenter implements CP5Presenter<Slider>, ValueControll
         return localSliderValueCopy;
     }
 
-    @Override
-    public PVector present(PVector origin, PVector minimumSize, PVector maximumSize) {
-        System.out.println(mValue);
-        return new PVector(0,0);
-    }
+//    @Override
+//    public PVector present(PVector origin, PVector minimumSize, PVector maximumSize) {
+//        System.out.println(mValue);
+//        return new PVector(0,0);
+//    }
 
     @Override
     public Controller<Slider> getControl() {
@@ -65,14 +64,14 @@ public class SliderValuePresenter implements CP5Presenter<Slider>, ValueControll
      * @param maximumSize
      * @return
      */
-    @Override
-    public PVector presentValue(PVector origin, PVector minimumSize, PVector maximumSize) {
-        slider.setPosition(origin.x, origin.y);
-        slider.setValue(mValue.getValue());
-        slider.setWidth((int)maximumSize.x);
-        slider.setHeight((int)maximumSize.y);
-        return maximumSize;
-    }
+//    @Override
+//    public PVector draw(PVector origin, PVector minimumSize, PVector maximumSize) {
+//        slider.setPosition(origin.x, origin.y);
+//        slider.setValue(mValue.getValue());
+//        slider.setWidth((int)maximumSize.x);
+//        slider.setHeight((int)maximumSize.y);
+//        return maximumSize;
+//    }
 
     //    @Override
 //    public Controller<Slider> getControl() {

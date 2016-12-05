@@ -7,7 +7,7 @@ import processing.core.PVector;
 /**
  * Created by patwheaton on 10/18/16.
  */
-public class CP5ManagedValuePresenter<T extends Number> implements ValuePresenter {
+public class BaseManagedValueControlPanel<T extends Number> implements ManagedValueControlPanel {
 
     private final int MARGIN = 5;
 
@@ -16,11 +16,11 @@ public class CP5ManagedValuePresenter<T extends Number> implements ValuePresente
     private PApplet app;
 
 
-    public CP5ManagedValuePresenter(PApplet app, ManagedValue<T> value) {
+    public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value) {
         this(app, value, app.createFont("Arial", 14));
     }
 
-    public CP5ManagedValuePresenter(PApplet app, ManagedValue<T> value, PFont font) {
+    public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value, PFont font) {
         this.app = app;
         this.font = font;
         this.value = value;
@@ -29,7 +29,7 @@ public class CP5ManagedValuePresenter<T extends Number> implements ValuePresente
 
 
     @Override
-    public PVector presentValue(PVector origin, PVector minimumSize, PVector maximumSize) {
+    public PVector draw(PVector origin, PVector minimumSize, PVector maximumSize) {
 
         // ------------------------------------
         //   value name
@@ -48,14 +48,12 @@ public class CP5ManagedValuePresenter<T extends Number> implements ValuePresente
 
         // assume that we have been translated or whatevs, so we can just draw at 0,0
 
-        //app.text();
         int currentX = 0;
         int currentY = 0;
-        // size of what is in this display
-        PVector size = new PVector(0,0);
+        float maxXUsed = 0;
         app.text(value.getKey(), MARGIN, MARGIN);
         currentY += font.getSize() + MARGIN + MARGIN;
-
+        maxXUsed = app.textWidth(value.getKey()) + MARGIN;
 
         for (ValueController<T> vc : value.getAvailableValueControllers()) {
             // TODO: create the checkbox. for now just indicate if it's the active one.
@@ -64,23 +62,15 @@ public class CP5ManagedValuePresenter<T extends Number> implements ValuePresente
             }
             currentX += font.getGlyph('X').width * 5;
             // draw the controller
-            vc.draw(app);
-
+            app.pushMatrix();
+            app.translate(currentX, currentY);
+            PVector delta = vc.draw(app);
+            app.popMatrix();
+            currentY += delta.y;
+            maxXUsed = delta.x > maxXUsed ? delta.x : maxXUsed;
         }
 
-
-        value.getAvailableValueControllers().stream().forEach(c -> {});
-
-        return size;
+        return new PVector(maxXUsed, currentY);
 
     }
-
-
-
-
-
-
-
-
-
 }

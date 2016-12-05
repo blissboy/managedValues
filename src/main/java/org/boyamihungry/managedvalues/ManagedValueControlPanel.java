@@ -5,10 +5,7 @@ import processing.core.PVector;
 /**
  * Created by patwheaton on 10/9/16.
  */
-public interface ValuePresenter {
-
-    static String ID = "VALUE_PRESENTER";
-
+public interface ManagedValueControlPanel {
 
     /**
      * Presents a value at the
@@ -17,7 +14,7 @@ public interface ValuePresenter {
      * @param minimumSize
      * @param maximumSize
      */
-    PVector presentValue(PVector origin, PVector minimumSize, PVector maximumSize);
+    PVector draw(PVector origin, PVector minimumSize, PVector maximumSize);
 
 
 }

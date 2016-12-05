@@ -1,16 +1,13 @@
 package org.boyamihungry.managedvalues;
 
-import lombok.NonNull;
 import processing.core.PVector;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by patwheaton on 10/11/16.
  */
-public class CP5ManagedView implements ManagedView {
+public class CP5ManagedValuesControlPanel implements ManagedValuesControlPanel {
 
     private final String name;
     private int locationX;
@@ -21,7 +18,7 @@ public class CP5ManagedView implements ManagedView {
     static final PVector ORIGIN = new PVector(0,0);
 
 
-    public CP5ManagedView(String name, int x, int y) {
+    public CP5ManagedValuesControlPanel(String name, int x, int y) {
         this.name = name;
         locationX = x;
         locationY = y;
@@ -33,7 +30,7 @@ public class CP5ManagedView implements ManagedView {
 
     private Set<ManagedValue> values = new HashSet<>();
 
-    private Map<ManagedValue, List<ValuePresenter>> activePresenters = new HashMap<>();
+    private Map<ManagedValue, List<ManagedValueControlPanel>> activePresenters = new HashMap<>();
 
     /**
      * map of <managed value class, presenter classes> showing what presenter types are available to what managed value types.
@@ -56,8 +53,8 @@ public class CP5ManagedView implements ManagedView {
         //herehere does this work?
         for ( ManagedValue value : values) {
             if (activePresenters.containsKey(value)) {
-                for ( ValuePresenter presenter : activePresenters.get(value) ) {
-                    currentOrigin.add(presenter.presentValue(currentOrigin, ORIGIN, sizeLimit));
+                for ( ManagedValueControlPanel presenter : activePresenters.get(value) ) {
+                    currentOrigin.add(presenter.draw(currentOrigin, ORIGIN, sizeLimit));
                 }
                 currentOrigin.y += MARGIN;
             }
@@ -101,32 +98,32 @@ public class CP5ManagedView implements ManagedView {
      * @param presenter
      * @param makeItTheOnlyPresenter
      */
-    @Override
-    public <T extends Number> void setPresenterForValue(ManagedValue<T> value, ValuePresenter presenter, boolean makeItTheOnlyPresenter) {
-
-        // validate presenter is a cp5 presenter
-        if ( ! (presenter instanceof CP5Presenter ) ) {
-            throw new IllegalArgumentException("The presenter " + presenter + " is not a subtype of " + CP5Presenter.class.getName());
-        }
-        CP5Presenter cp5Presenter = (CP5Presenter)presenter;
-
-        // add it to the list of available presenters for that managed value type
-        if ( availablePresenters.containsKey(value.getClass())) {
-            availablePresenters.get(value.getClass()).add(presenter.getClass());
-        } else {
-            availablePresenters.put(value.getClass(), Stream.of(cp5Presenter.getClass()).collect(Collectors.toSet()));
-        }
-
-        if ( (! makeItTheOnlyPresenter) || activePresenters.containsKey(value) ) {
-            activePresenters.get(value).add(cp5Presenter);
-        } else {
-            activePresenters.put(value, Stream.of(cp5Presenter).collect(Collectors.toList()));
-        }
-
-        // "redraw" the presenters
-        layoutPresenters();
-
-    }
+//    @Override
+//    public <T extends Number> void setPresenterForValue(ManagedValue<T> value, ManagedValueControlPanel presenter, boolean makeItTheOnlyPresenter) {
+//
+//        // validate presenter is a cp5 presenter
+//        if ( ! (presenter instanceof CP5Controller) ) {
+//            throw new IllegalArgumentException("The presenter " + presenter + " is not a subtype of " + CP5Controller.class.getName());
+//        }
+//        CP5Controller cp5Controller = (CP5Controller)presenter;
+//
+//        // add it to the list of available presenters for that managed value type
+//        if ( availablePresenters.containsKey(value.getClass())) {
+//            availablePresenters.get(value.getClass()).add(presenter.getClass());
+//        } else {
+//            availablePresenters.put(value.getClass(), Stream.of(cp5Controller.getClass()).collect(Collectors.toSet()));
+//        }
+//
+//        if ( (! makeItTheOnlyPresenter) || activePresenters.containsKey(value) ) {
+//            activePresenters.get(value).add(cp5Controller);
+//        } else {
+//            activePresenters.put(value, Stream.of(cp5Controller).collect(Collectors.toList()));
+//        }
+//
+//        // "redraw" the presenters
+//        layoutPresenters();
+//
+//    }
 
     private void layoutPresenters() {
 
@@ -220,28 +217,28 @@ public class CP5ManagedView implements ManagedView {
      * @param presenter
      * @param makeItTheOnlyPresenter
      */
-    @Override
-    public void setPresenterForValue(String valueKey, ValuePresenter presenter, boolean makeItTheOnlyPresenter) {
-        ManagedValue value = values.stream().filter(s -> s.getKey().equals(valueKey)).findFirst().orElse(null);
-        if ( null != value ) {
-            setPresenterForValue(value, presenter, makeItTheOnlyPresenter);
-        } else {
-            throw new ManagedValueManager.NoSuchManagedValueException("There is no managed value with the name " + valueKey + " in this view: " + this);
-        }
-    }
+//    @Override
+//    public void setPresenterForValue(String valueKey, ManagedValueControlPanel presenter, boolean makeItTheOnlyPresenter) {
+//        ManagedValue value = values.stream().filter(s -> s.getKey().equals(valueKey)).findFirst().orElse(null);
+//        if ( null != value ) {
+//            setPresenterForValue(value, presenter, makeItTheOnlyPresenter);
+//        } else {
+//            throw new ManagedValueManager.NoSuchManagedValueException("There is no managed value with the name " + valueKey + " in this view: " + this);
+//        }
+//    }
 
-    @Override
-    public Collection<Class> getAvailablePresenters(@NonNull Class clazz) {
-        return Collections.unmodifiableSet(availablePresenters.get(clazz));
-    }
-
-    @Override
-    public Collection<Class> getAvailablePresenters(@NonNull ManagedValue value) {
-        return getAvailablePresenters(value.getClass());
-    }
-
-    @Override
-    public Collection<ValuePresenter> getPresenterForValue(ManagedValue value) {
-        return activePresenters.get(value );
-    }
+//    @Override
+//    public Collection<Class> getAvailablePresenters(@NonNull Class clazz) {
+//        return Collections.unmodifiableSet(availablePresenters.get(clazz));
+//    }
+//
+//    @Override
+//    public Collection<Class> getAvailablePresenters(@NonNull ManagedValue value) {
+//        return getAvailablePresenters(value.getClass());
+//    }
+//
+//    @Override
+//    public Collection<ManagedValueControlPanel> getPresenterForValue(ManagedValue value) {
+//        return activePresenters.get(value );
+//    }
 }

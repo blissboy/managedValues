@@ -1,10 +1,9 @@
 package org.boyamihungry.managedvalues;
 
+import processing.core.PVector;
+
 import java.util.Collection;
 
-/**
- * Created by patwheaton on 10/9/16.
- */
 public interface ManagedValue<T extends Number> {
 
     /**
@@ -66,7 +65,5 @@ public interface ManagedValue<T extends Number> {
      */
     Collection<ValueController<T>> getAvailableValueControllers();
 
-
-
-
+    PVector drawControlPanel();
 }

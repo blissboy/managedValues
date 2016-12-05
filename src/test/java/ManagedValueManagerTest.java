@@ -1,5 +1,5 @@
 import org.boyamihungry.managedvalues.ManagedValueManager;
-import org.boyamihungry.managedvalues.ManagedView;
+import org.boyamihungry.managedvalues.ManagedValuesControlPanel;
 import org.boyamihungry.managedvalues.ValueController;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class ManagedValueManagerTest {
 
     @Test
     public void view_that_does_not_exist_returns_null() {
-        ManagedView view = manager.getView("does not exist");
+        ManagedValuesControlPanel view = manager.getView("does not exist");
 
         assertNull("view should be uill" + view, view);
     }

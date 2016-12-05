@@ -1,14 +1,17 @@
 package org.boyamihungry.managedvalues;
 
+import processing.core.PApplet;
+
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by patwheaton on 10/9/16.
  */
 public interface ManagedValueManager {
 
-    List<ManagedView> views = new ArrayList<>();
+    List<ManagedValuesControlPanel> views = new ArrayList<>();
     Map<String, ManagedValue> values = new HashMap<>();
     HashMap<Type, Set<ValueController<? extends Number>>> mappp = new HashMap<>();
 
@@ -37,25 +40,25 @@ public interface ManagedValueManager {
     }
 
     default List<ManagedValue> getManagedValues() {
-        return Collections.unmodifiableList((List<ManagedValue>)values.values());
+        return Collections.unmodifiableList(values.values().stream().collect(Collectors.toList()));
     }
 
-    default ManagedView getView(String viewKey) {
+    default ManagedValuesControlPanel getView(String viewKey) {
         return views.stream().filter(v -> v.getName().equals(viewKey)).findFirst().orElse(null);
     }
 
-    default public List<ManagedView> getViews() {
+    default public List<ManagedValuesControlPanel> getViews() {
         return Collections.unmodifiableList(views);
     }
 
-    default void addView(ManagedView view) {
+    default void addView(ManagedValuesControlPanel view) {
         if ( null == getView(view.getName()) ) {
             views.add(view);
         }
     }
 
-    default <T extends Number> ManagedValue<T> createManagedValue(String key, T min, T max, T defaultValue) {
-        ManagedValue<T> value = new BaseManagedValue<T>(key, new BaseManagedValue.Range<T>(min, max, defaultValue));
+    default <T extends Number> ManagedValue<T> createManagedValue(String key, T min, T max, T defaultValue, PApplet app) {
+        ManagedValue<T> value = new BaseManagedValue<T>(key, new BaseManagedValue.Range<T>(min, max, defaultValue), app);
         values.put(key, value);
         return value;
     }
