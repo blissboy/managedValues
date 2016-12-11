@@ -1,4 +1,7 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.controllers;
+
+import org.boyamihungry.managedvalues.values.ManagedValue;
+import org.boyamihungry.managedvalues.valuegenerators.Oscillator;
 
 import java.util.concurrent.Callable;
 

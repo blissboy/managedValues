@@ -1,4 +1,4 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.values;
 
 import processing.core.PVector;
 

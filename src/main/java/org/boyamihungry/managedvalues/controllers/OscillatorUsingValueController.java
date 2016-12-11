@@ -1,5 +1,6 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.controllers;
 
+import org.boyamihungry.managedvalues.valuegenerators.Oscillator;
 import processing.core.PApplet;
 import processing.core.PVector;
 

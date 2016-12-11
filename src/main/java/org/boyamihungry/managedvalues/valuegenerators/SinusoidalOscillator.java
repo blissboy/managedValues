@@ -1,4 +1,4 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.valuegenerators;
 
 import lombok.NonNull;
 

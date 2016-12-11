@@ -1,6 +1,7 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.values;
 
 import lombok.NonNull;
+import org.boyamihungry.managedvalues.controllers.ValueController;
 import processing.core.PApplet;
 import processing.core.PVector;
 

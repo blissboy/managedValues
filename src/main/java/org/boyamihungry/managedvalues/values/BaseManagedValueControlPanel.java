@@ -1,5 +1,6 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.values;
 
+import org.boyamihungry.managedvalues.controllers.ValueController;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
@@ -53,9 +54,16 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
         float currentY = app.textAscent() + app.textDescent();
         float maxXUsed = 0;
 
-        app.text(value.getKey(),currentX + MARGIN, currentY + MARGIN);
+        String displayText = "Managed Value: " + value.getKey();
+        app.text(displayText,currentX + MARGIN, currentY + MARGIN);
         currentY += app.textAscent() + app.textDescent() + MARGIN + MARGIN;
-        maxXUsed = app.textWidth(value.getKey()) + MARGIN;
+        maxXUsed = app.textWidth(displayText) + MARGIN;
+        displayText = "\tmin:" + value.getRange().getMin() +
+                " max:" + value.getRange().getMax() +
+                " default: " + value.getRange().getDefault();
+        app.text(displayText, currentX + MARGIN, currentY + MARGIN);
+        currentY += app.textAscent() + app.textDescent() + MARGIN + MARGIN;
+        maxXUsed = app.textWidth(displayText) + MARGIN;
 
         for (ValueController<T> vc : value.getAvailableValueControllers()) {
             // TODO: create the checkbox. for now just indicate if it's the active one.

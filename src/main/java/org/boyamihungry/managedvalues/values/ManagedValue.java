@@ -1,5 +1,6 @@
-package org.boyamihungry.managedvalues;
+package org.boyamihungry.managedvalues.values;
 
+import org.boyamihungry.managedvalues.controllers.ValueController;
 import processing.core.PVector;
 
 import java.util.Collection;

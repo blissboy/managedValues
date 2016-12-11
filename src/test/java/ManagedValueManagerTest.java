@@ -1,10 +1,6 @@
 import org.boyamihungry.managedvalues.ManagedValueManager;
-import org.boyamihungry.managedvalues.ManagedValuesControlPanel;
-import org.boyamihungry.managedvalues.ValueController;
+import org.boyamihungry.managedvalues.controllers.ValueController;
 import org.junit.BeforeClass;
-import org.junit.Test;
-
-import static org.junit.Assert.assertNull;
 
 /**
  * Created by patwheaton on 10/13/16.
@@ -28,12 +24,6 @@ public class ManagedValueManagerTest {
 
     }
 
-    @Test
-    public void view_that_does_not_exist_returns_null() {
-        ManagedValuesControlPanel view = manager.getView("does not exist");
-
-        assertNull("view should be uill" + view, view);
-    }
 
 
 }
