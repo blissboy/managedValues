@@ -9,7 +9,7 @@ import processing.core.PVector;
  */
 public class BaseManagedValueControlPanel<T extends Number> implements ManagedValueControlPanel {
 
-    private final int MARGIN = 5;
+    private final float MARGIN = 5;
 
     private ManagedValue<T> value;
     private PFont font;
@@ -17,12 +17,13 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
 
 
     public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value) {
-        this(app, value, app.createFont("Arial", 14));
+        this(app, value, app.createFont("Arial", 28));
     }
 
     public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value, PFont font) {
         this.app = app;
         this.font = font;
+        app.textFont(font);
         this.value = value;
     }
 
@@ -46,13 +47,14 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
         // current value controller has its box checked
         // checking box changes value controller
 
-        // assume that we have been translated or whatevs, so we can just draw at 0,0
-
-        int currentX = 0;
-        int currentY = 0;
+        app.pushMatrix();
+        app.translate(origin.x, origin.y);
+        float currentX = MARGIN;
+        float currentY = app.textAscent() + app.textDescent();
         float maxXUsed = 0;
-        app.text(value.getKey(), MARGIN, MARGIN);
-        currentY += font.getSize() + MARGIN + MARGIN;
+
+        app.text(value.getKey(),currentX + MARGIN, currentY + MARGIN);
+        currentY += app.textAscent() + app.textDescent() + MARGIN + MARGIN;
         maxXUsed = app.textWidth(value.getKey()) + MARGIN;
 
         for (ValueController<T> vc : value.getAvailableValueControllers()) {
@@ -67,8 +69,13 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
             PVector delta = vc.draw(app);
             app.popMatrix();
             currentY += delta.y;
-            maxXUsed = delta.x > maxXUsed ? delta.x : maxXUsed;
+            maxXUsed = delta.x + currentX > maxXUsed ? delta.x + currentX : maxXUsed;
+            currentX = MARGIN;
         }
+        currentY += (app.textAscent() + app.textDescent());
+        app.text("current managed value: " + value.getValue(), currentX, currentY);
+
+        app.popMatrix();
 
         return new PVector(maxXUsed, currentY);
 

@@ -176,6 +176,28 @@ public  class BaseManagedValue<T extends Number> implements ManagedValue<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        BaseManagedValue<?> that = (BaseManagedValue<?>) o;
 
+        if (!key.equals(that.key)) return false;
+        if (!range.equals(that.range)) return false;
+        if (!controlPanel.equals(that.controlPanel)) return false;
+        if (possibleControllers != null ? !possibleControllers.equals(that.possibleControllers) : that.possibleControllers != null)
+            return false;
+        return currentController != null ? currentController.equals(that.currentController) : that.currentController == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key.hashCode();
+        result = 31 * result + range.hashCode();
+        result = 31 * result + controlPanel.hashCode();
+        result = 31 * result + (possibleControllers != null ? possibleControllers.hashCode() : 0);
+        result = 31 * result + (currentController != null ? currentController.hashCode() : 0);
+        return result;
+    }
 }
