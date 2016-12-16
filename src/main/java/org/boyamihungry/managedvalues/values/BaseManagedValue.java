@@ -143,12 +143,12 @@ public  class BaseManagedValue<T extends Number> implements ManagedValue<T> {
             Number maxx = max;
             Number defaultt = defaultValue;
 
-            if (minn.doubleValue() < maxx.doubleValue() && defaultt.doubleValue() <= maxx.doubleValue() && defaultt.doubleValue() >= minn.doubleValue()) {
+            if (minn.doubleValue() <= maxx.doubleValue() && defaultt.doubleValue() <= maxx.doubleValue() && defaultt.doubleValue() >= minn.doubleValue()) {
                 this.max = max;
                 this.min = min;
                 this.defaultValue = defaultValue;
             } else {
-                throw new IllegalArgumentException("rule violated: min < defaultValue < max");
+                throw new IllegalArgumentException("rule violated: min <= defaultValue <= max");
             }
         }
 

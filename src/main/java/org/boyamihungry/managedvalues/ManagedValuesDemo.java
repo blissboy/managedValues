@@ -3,7 +3,7 @@ package org.boyamihungry.managedvalues;
 import org.boyamihungry.managedvalues.controllers.OscillatorValueController;
 import org.boyamihungry.managedvalues.controllers.ValueController;
 import org.boyamihungry.managedvalues.valuegenerators.Oscillator;
-import org.boyamihungry.managedvalues.valuegenerators.SinusoidalOscillator;
+import org.boyamihungry.managedvalues.valuegenerators.SinusoidalOscillatorBuilder;
 import org.boyamihungry.managedvalues.values.ManagedValue;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class ManagedValuesDemo extends PApplet {
 
@@ -32,7 +33,7 @@ public class ManagedValuesDemo extends PApplet {
 
     @Override
     public void setup()  {
-        frameRate(33);
+        frameRate(5);
         mgr = new ManagedValueManager() {
             @Override
             public String getName() {
@@ -46,12 +47,33 @@ public class ManagedValuesDemo extends PApplet {
 
         ManagedValue<Float> floatVar = mgr.createManagedValue("floatVar", 0f, 1000f, 100f, this);
         pointMap.put(floatVar.getKey(), new ArrayList<>(POINTS));
-        Oscillator sin99 = new SinusoidalOscillator(99f);
+
+        ManagedValue<Float> frameBasedVar = mgr.createManagedValue("frameBasedVar", 0f, 1000f, 100f, this);
+        pointMap.put(frameBasedVar.getKey(), new ArrayList<>(POINTS));
+
+
+        // add a time based oscillator
+        Oscillator sin99 = new SinusoidalOscillatorBuilder().withFrequency(99f).build();
         floatVar.addValueController(new OscillatorValueController<>(floatVar, sin99));
-        floatVar.addValueController(new OscillatorValueController<>(floatVar, new SinusoidalOscillator<Float>(200f)));
+
+        // add a frame based oscillator
+        Oscillator<Float> framesOsc = new SinusoidalOscillatorBuilder<>()
+                .withFrequency(99f)
+                .withName("frame based 99")
+                .withTimecodeGetter(
+                new Callable<Long>() {
+                    @Override
+                    public Long call() throws Exception {
+                        return Long.valueOf(frameCount);
+                    }
+                }).build();
+
+        frameBasedVar.addValueController(new OscillatorValueController<>(frameBasedVar, framesOsc));
+        //floatVar.addValueController(new OscillatorValueController<>(floatVar, new SinusoidalOscillatorBuilder<>().withFrequency(200f).build()));
 
         try {
             floatVar.setValueController(floatVar.getAvailableValueControllers().stream().findFirst().get());
+            frameBasedVar.setValueController(frameBasedVar.getAvailableValueControllers().stream().findFirst().get());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

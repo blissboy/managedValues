@@ -25,7 +25,7 @@ public interface OscillatorUsingValueController<T extends Number> extends ValueC
 
     default PVector draw(final PApplet app) {
         float lineHeight = (app.textAscent() + app.textDescent()) * 1.05f;
-        String text = "Oscilator with frequency " + getOscillator().getFrequency();
+        String text = getOscillator().getName() + " using controller";
 
         app.text(text,0,0);
         app.text("current value: " + this.getValue(), 0, lineHeight);
