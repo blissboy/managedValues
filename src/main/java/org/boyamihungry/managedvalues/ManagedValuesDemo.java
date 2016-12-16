@@ -45,7 +45,7 @@ public class ManagedValuesDemo extends PApplet {
             }
         };
 
-        ManagedValue<Float> floatVar = mgr.createManagedValue("floatVar", 0f, 1000f, 100f, this);
+        ManagedValue<Float> floatVar = mgr.createManagedValue("floatVar", 990f, 1000f, 995f, this);
         pointMap.put(floatVar.getKey(), new ArrayList<>(POINTS));
 
         ManagedValue<Float> frameBasedVar = mgr.createManagedValue("frameBasedVar", 0f, 1000f, 100f, this);

@@ -15,13 +15,29 @@ public class  OscillatorValueController<T extends Number> implements OscillatorU
     final Oscillator<? extends Number> oscillator;
     Callable<T> getvalue;
 
+
+    /**
+     * value = (((max - min) / 2) + min)
+     *
+     *
+     * min = 10, max = 100
+     * ((100 - 10) / 2) + ((100 + 10) / 2) * osc
+     *
+     *
+     *
+     *
+     * @param value
+     * @param oscillator
+     */
     public OscillatorValueController(ManagedValue<T> value, Oscillator<? extends Number> oscillator) {
         this.value = value;
         this.oscillator = oscillator;
 
         if (value.getRange().getMin() instanceof Float) {
-            float midpointOfRange = (value.getRange().getMax().floatValue() - value.getRange().getMin().floatValue()) / 2f;
-            float halfRangeSpan = (value.getRange().getMax().floatValue() + value.getRange().getMin().floatValue()) / 2f;
+            float halfRangeSpan = (value.getRange().getMax().floatValue() - value.getRange().getMin().floatValue()) / 2f;
+            //System.out.println( "midpoint of " + value.getRange().getMax() + " and " + value.getRange().getMin() + " is " + midpointOfRange);
+            float midpointOfRange = (value.getRange().getMax().floatValue() + value.getRange().getMin().floatValue()) / 2f;
+            //System.out.println( "halfrangespan of " + value.getRange().getMax() + " and " + value.getRange().getMin() + " is " + halfRangeSpan);
             getvalue = new Callable<T>() {
                 @Override
                 public T call() throws Exception {
