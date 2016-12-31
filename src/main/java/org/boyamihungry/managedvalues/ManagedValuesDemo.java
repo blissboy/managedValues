@@ -7,6 +7,7 @@ import org.boyamihungry.managedvalues.valuegenerators.SinusoidalOscillatorBuilde
 import org.boyamihungry.managedvalues.values.ManagedValue;
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.event.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,8 +49,11 @@ public class ManagedValuesDemo extends PApplet {
         ManagedValue<Float> floatVar = mgr.createManagedValue("floatVar", 990f, 1000f, 995f, this);
         pointMap.put(floatVar.getKey(), new ArrayList<>(POINTS));
 
-        ManagedValue<Float> frameBasedVar = mgr.createManagedValue("frameBasedVar", 0f, 1000f, 100f, this);
+        ManagedValue<Float> frameBasedVar = mgr.createManagedValue("frameBasedVar", 0f, 255f, 200f, this);
         pointMap.put(frameBasedVar.getKey(), new ArrayList<>(POINTS));
+
+        ManagedValue<Float> stepBasedVar = mgr.createManagedValue("stepBasedVar", 0f, 255f, 200f, this);
+        pointMap.put(stepBasedVar.getKey(), new ArrayList<>(POINTS));
 
 
         // add a time based oscillator
@@ -69,11 +73,30 @@ public class ManagedValuesDemo extends PApplet {
                 }).build();
 
         frameBasedVar.addValueController(new OscillatorValueController<>(frameBasedVar, framesOsc));
+
+        // add a stepping based oscillator
+        Oscillator<Float> steppingOsc = new SinusoidalOscillatorBuilder<>()
+                .withFrequency(99f)
+                .withName("step based 99")
+                .withTimecodeGetter(
+                new Callable<Long>() {
+                    long value = 0;
+                    @Override
+                    public Long call() throws Exception {
+                        return value++;
+                    }
+                }).build();
+
+        stepBasedVar.addValueController(new OscillatorValueController<>(stepBasedVar, steppingOsc));
+
+
+
         //floatVar.addValueController(new OscillatorValueController<>(floatVar, new SinusoidalOscillatorBuilder<>().withFrequency(200f).build()));
 
         try {
             floatVar.setValueController(floatVar.getAvailableValueControllers().stream().findFirst().get());
             frameBasedVar.setValueController(frameBasedVar.getAvailableValueControllers().stream().findFirst().get());
+            stepBasedVar.setValueController(stepBasedVar.getAvailableValueControllers().stream().findFirst().get());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -127,6 +150,10 @@ public class ManagedValuesDemo extends PApplet {
         });
     }
 
+    @Override
+    public void keyPressed(KeyEvent event) {
+        super.keyPressed(event);
+    }
 
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[]{"org.boyamihungry.managedvalues.ManagedValuesDemo"};

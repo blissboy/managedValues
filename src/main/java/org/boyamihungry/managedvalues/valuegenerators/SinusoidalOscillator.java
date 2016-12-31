@@ -4,7 +4,7 @@ import lombok.NonNull;
 
 import java.util.concurrent.Callable;
 
-import static processing.core.PApplet.sin;
+import static processing.core.PApplet.cos;
 import static processing.core.PConstants.TWO_PI;
 
 /**
@@ -51,7 +51,7 @@ public class SinusoidalOscillator<T extends Float> implements Oscillator {
     @Override
     public Float getValue() {
         try {
-            return sin((float) ((((double) timecodeGetter.call() % getFrequency()) / getFrequency()) * TWO_PI));
+            return cos((float) ((((double) timecodeGetter.call() % getFrequency()) / getFrequency()) * TWO_PI));
         } catch (Exception e) {
             return 0f;
         }

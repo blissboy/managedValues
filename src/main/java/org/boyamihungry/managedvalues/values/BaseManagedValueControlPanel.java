@@ -1,14 +1,18 @@
 package org.boyamihungry.managedvalues.values;
 
+import org.boyamihungry.managedvalues.controllers.InputSink;
+import org.boyamihungry.managedvalues.controllers.MouseClickWatcher;
 import org.boyamihungry.managedvalues.controllers.ValueController;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
 
+import java.awt.event.MouseEvent;
+
 /**
  * Created by patwheaton on 10/18/16.
  */
-public class BaseManagedValueControlPanel<T extends Number> implements ManagedValueControlPanel {
+public class BaseManagedValueControlPanel<T extends Number> implements ManagedValueControlPanel, InputSink, MouseClickWatcher {
 
     private final float MARGIN = 5;
 
@@ -18,7 +22,7 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
 
 
     public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value) {
-        this(app, value, app.createFont("Arial", 28));
+        this(app, value, app.createFont("Arial", 10));
     }
 
     public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value, PFont font) {
@@ -27,7 +31,6 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
         app.textFont(font);
         this.value = value;
     }
-
 
 
     @Override
@@ -87,5 +90,20 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
 
         return new PVector(maxXUsed, currentY);
 
+    }
+
+    @Override
+    public MouseEvent mouseClicked(MouseEvent mouseEvent) {
+        return mouseEvent;
+    }
+
+    /**
+     * Method to turn off input to this controller, likely because some other controller wants to accept input as well.
+     *
+     * @return true if this sink is now disabled, false if not acceptable.
+     */
+    @Override
+    public boolean disableSinkIfAcceptable() {
+        return true;
     }
 }

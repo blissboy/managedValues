@@ -54,17 +54,17 @@ public class  OscillatorValueController<T extends Number> implements OscillatorU
                 }
             };
         } else if (value.getRange().getMin() instanceof Integer) {
-            int midpointOfRange = (value.getRange().getMax().intValue() - value.getRange().getMin().intValue()) / 2;
-            int halfRangeSpan = (value.getRange().getMax().intValue() + value.getRange().getMin().intValue()) / 2;
+            int  halfRangeSpan = (value.getRange().getMax().intValue() - value.getRange().getMin().intValue()) / 2;
+            int midpointOfRange = (value.getRange().getMax().intValue() + value.getRange().getMin().intValue()) / 2;
             getvalue = new Callable<T>() {
                 @Override
                 public T call() throws Exception {
-                    return (T)(Integer.valueOf(midpointOfRange + (halfRangeSpan * oscillator.getValue().intValue())));
+                    return (T)(Integer.valueOf(midpointOfRange + (int)(halfRangeSpan * oscillator.getValue().floatValue())));
                 }
             };
         } else if (value.getRange().getMin() instanceof Long) {
-            long midpointOfRange = (value.getRange().getMax().longValue() - value.getRange().getMin().longValue()) / 2L;
-            long halfRangeSpan = (value.getRange().getMax().longValue() + value.getRange().getMin().longValue()) / 2L;
+            long halfRangeSpan = (value.getRange().getMax().longValue() - value.getRange().getMin().longValue()) / 2L;
+            long midpointOfRange = (value.getRange().getMax().longValue() + value.getRange().getMin().longValue()) / 2L;
             getvalue = new Callable<T>() {
                 @Override
                 public T call() throws Exception {
