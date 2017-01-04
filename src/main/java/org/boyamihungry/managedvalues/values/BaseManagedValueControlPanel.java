@@ -1,5 +1,6 @@
 package org.boyamihungry.managedvalues.values;
 
+import org.boyamihungry.managedvalues.ProcessingUtilities;
 import org.boyamihungry.managedvalues.controllers.InputSink;
 import org.boyamihungry.managedvalues.controllers.MouseClickWatcher;
 import org.boyamihungry.managedvalues.controllers.ValueController;
@@ -8,18 +9,27 @@ import processing.core.PFont;
 import processing.core.PVector;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by patwheaton on 10/18/16.
  */
-public class BaseManagedValueControlPanel<T extends Number> implements ManagedValueControlPanel, InputSink, MouseClickWatcher {
+public class BaseManagedValueControlPanel<T extends Number>
+        implements ManagedValueControlPanel,
+        InputSink,
+        MouseClickWatcher {
 
     private final float MARGIN = 5;
+    private final PVector MARGIN_VECTOR = new PVector(MARGIN, MARGIN);
 
     private ManagedValue<T> value;
     private PFont font;
     private PApplet app;
+    private PVector origin;
+    private PVector drawnSize;
 
+    List<MouseClickWatcher> mouseWatchers = new ArrayList<>();
 
     public BaseManagedValueControlPanel(PApplet app, ManagedValue<T> value) {
         this(app, value, app.createFont("Arial", 10));
@@ -51,46 +61,52 @@ public class BaseManagedValueControlPanel<T extends Number> implements ManagedVa
         // current value controller has its box checked
         // checking box changes value controller
 
-        app.pushMatrix();
-        app.translate(origin.x, origin.y);
-        float currentX = MARGIN;
-        float currentY = app.textAscent() + app.textDescent();
-        float maxXUsed = 0;
+        float currentX = MARGIN + origin.x;
 
-        String displayText = "Managed Value: " + value.getKey();
-        app.text(displayText,currentX + MARGIN, currentY + MARGIN);
-        currentY += app.textAscent() + app.textDescent() + MARGIN + MARGIN;
-        maxXUsed = app.textWidth(displayText) + MARGIN;
-        displayText = "\tmin:" + value.getRange().getMin() +
-                " max:" + value.getRange().getMax() +
-                " default: " + value.getRange().getDefault();
-        app.text(displayText, currentX + MARGIN, currentY + MARGIN);
-        currentY += app.textAscent() + app.textDescent() + MARGIN + MARGIN;
-        maxXUsed = app.textWidth(displayText) + MARGIN;
+        PVector currentYVector = origin.copy().add(MARGIN, MARGIN);
+
+        currentYVector.add(0, ProcessingUtilities.drawText(app, "", currentYVector).y);
+        currentYVector.add(0, drawValueHeader(currentYVector).y);
+        currentYVector.add(0, drawRange(currentYVector).y);
 
         for (ValueController<T> vc : value.getAvailableValueControllers()) {
             // TODO: create the checkbox. for now just indicate if it's the active one.
             if (value.getCurrentValueController().equals(vc)) {
-                app.text("XXX", font.getGlyph('X').width + currentX, currentY);
+                ProcessingUtilities.drawText(
+                        app,
+                        "XXX",
+                        new PVector(font.getGlyph('X').width + currentX, currentYVector.y)
+                );
             }
             currentX += font.getGlyph('X').width * 5;
-            // draw the controller
-            app.pushMatrix();
-            app.translate(currentX, currentY);
-            PVector delta = vc.draw(app);
-            app.popMatrix();
-            currentY += delta.y;
-            maxXUsed = delta.x + currentX > maxXUsed ? delta.x + currentX : maxXUsed;
-            currentX = MARGIN;
+            PVector drawVCAt = new PVector(currentX, currentYVector.y);
+            currentYVector.add(0, vc.draw(app, drawVCAt).y);
+            currentX = MARGIN + origin.x;
         }
-        currentY += (app.textAscent() + app.textDescent());
-        app.text("current managed value: " + value.getValue(), currentX, currentY);
+        currentYVector.add(0, ProcessingUtilities.drawText(
+                app,
+                "current managed value: " + value.getValue(),
+                currentYVector).y
+        );
 
-        app.popMatrix();
-
-        return new PVector(maxXUsed, currentY);
+        return currentYVector;
 
     }
+
+    private PVector drawRange(PVector origin) {
+        return ProcessingUtilities.drawText(
+                app,
+                "min:" + value.getRange().getMin() +
+                        " max:" + value.getRange().getMax() +
+                        " default: " + value.getRange().getDefault(),
+                origin);
+    }
+
+
+    private PVector drawValueHeader(PVector origin) {
+        return ProcessingUtilities.drawText(app, "Managed Value: " + value.getKey(), origin);
+    }
+
 
     @Override
     public MouseEvent mouseClicked(MouseEvent mouseEvent) {

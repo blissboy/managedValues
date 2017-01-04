@@ -1,5 +1,6 @@
 package org.boyamihungry.managedvalues.controllers;
 
+import org.boyamihungry.managedvalues.ProcessingUtilities;
 import org.boyamihungry.managedvalues.valuegenerators.Oscillator;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -23,12 +24,11 @@ public interface OscillatorUsingValueController<T extends Number> extends ValueC
         return computation.apply(getValue());
     }
 
-    default PVector draw(final PApplet app) {
-        float lineHeight = (app.textAscent() + app.textDescent()) * 1.05f;
+    default PVector draw(final PApplet app, PVector origin) {
         String text = getOscillator().getName() + " using controller";
-
-        app.text(text,0,0);
-        app.text("current value: " + this.getValue(), 0, lineHeight);
-        return new PVector(app.textWidth(text), 2f * lineHeight);
+        PVector drawAt = origin.copy();
+        drawAt.add(0, ProcessingUtilities.drawText(app, text, drawAt).y);
+        drawAt.add(0, ProcessingUtilities.drawText(app, "current value: " + this.getValue(), drawAt ).y);
+        return drawAt.sub(origin);
     }
 }
